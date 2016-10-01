@@ -1,1 +1,1 @@
-web: gunicorn skype:app
+web: gunicorn -w 3 skype:app
