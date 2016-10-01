@@ -55,7 +55,7 @@ async def send_message(msg, skypeid):
 
 
 async def handle(request):
-	print('========', request.json())
+    print('========', request.json())
     msg = await request.json()
     type_msg = msg['type']
     if type_msg == 'message':
@@ -63,7 +63,7 @@ async def handle(request):
         text = msg['text']
         asyncio.ensure_future(send_message(text+', да...', skypeid))
     return aiohttp.web.HTTPCreated()  # 201
-	
+
 loop = asyncio.get_event_loop()
 app = aiohttp.web.Application(loop=loop)
 app.router.add_route('POST', '/v1/chat', handle)
