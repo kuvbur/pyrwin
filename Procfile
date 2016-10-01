@@ -1,1 +1,1 @@
-web: gunicorn skype:init
+web: gunicorn skype
