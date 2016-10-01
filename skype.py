@@ -21,6 +21,7 @@ cache = werkzeug.contrib.cache.FileSystemCache('.cachedir', threshold=86400)
 common_http_headers = {'User-Agent': 'morse-code-bot/%s' % (__version__)}
 
 async def get_access_token():
+    print('=========111111111111')
     token = cache.get(key='token')
     if not token:
         # request access token
@@ -67,7 +68,6 @@ async def handle(request):
 loop = asyncio.get_event_loop()
 app = aiohttp.web.Application(loop=loop)
 app.router.add_route('POST', '/v1/chat', handle)
-
 #aiohttp.web.run_app(app,
 #                        host='localhost',
 #                        ssl_context=None,
