@@ -63,10 +63,8 @@ async def handle(request):
         asyncio.ensure_future(send_message(text+', да...', skypeid))
     return aiohttp.web.HTTPCreated()  # 201
 
-def init():
-    app = aiohttp.web.Application()
-    app.router.add_route('POST', '/v1/chat', handle)
-    return app
+app = aiohttp.web.Application()
+app.router.add_route('POST', '/v1/chat', handle)
 
 #aiohttp.web.run_app(app,
 #                        host='localhost',
