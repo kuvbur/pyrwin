@@ -1,27 +1,22 @@
 #!/usr/bin/env python3
-"""Skype bot that translates its input messages to International Morse code and back.
-
-The standard:
-https://www.itu.int/dms_pubrec/itu-r/rec/m/R-REC-M.1677-1-200910-I!!PDF-E.pdf
-
-# XXX 3.3.2, 3.5.1, 4.3, Part II, no abbreviations
-"""
 import asyncio
 import json
+import os
 import aiohttp.web  # $ pip install aiohttp
 import werkzeug.contrib.cache  # $ pip install werkzeug
 
-__version__ = '0.2.2'
+__version__ = '0.1'
 
-APP_ID = '98ddcde1-d588-49a6-abd3-06825f91e19d'
-APP_SECRET = 'bGrEypkEuiKjxCMadbP9Rj8'
+APP_ID = os.environ['APP_ID']
+APP_SECRET = os.environ['APP_SECRET']
 
 # cache access token on disk
 cache = werkzeug.contrib.cache.FileSystemCache('.cachedir', threshold=86400)
 common_http_headers = {'User-Agent': 'morse-code-bot/%s' % (__version__)}
 
+
 async def get_access_token():
-    print('=========111111111111')
+
     token = cache.get(key='token')
     if not token:
         # request access token
@@ -37,15 +32,9 @@ async def get_access_token():
         cache.set('token', token, timeout=token['expires_in'])
     return token['access_token']
 
-async def send_message(msg, skypeid):
-    """
-    POST / v3 / conversations / 29: alice / activities HTTP / 1.1
-    Host: apis.skype.com
-    Authorization: Bearer < redacted oauth2 token >
-    {
-      "message": {"content": "Hi! (wave)"}
-    }
-    """
+
+async def send_text(msg, skypeid):
+
     url = 'https://apis.skype.com/v3/conversations/%s/activities/' % (skypeid)
     token = await get_access_token()
     headers = {}
@@ -55,24 +44,35 @@ async def send_message(msg, skypeid):
         assert 200 <= r.status < 300
 
 
+async def send_messege(msg, skypeid):
+
+    asyncio.ensure_future(send_text(msg, skypeid))
+    return aiohttp.web.HTTPCreated()
+
+def index(request):
+
+    ind =[ "Now the world has gone to bed",\
+        "Darkness won't engulf my head",\
+        "I can see by infra-red",\
+        "How I hate the night",\
+        "Now I lay me down to sleep",\
+        "Try to count electric sheep",\
+        "Sweet dream wishes you can keep",\
+        "How I hate the night"]
+    return aiohttp.web.Response(text = "\n".join(ind))
+
+
 async def handle(request):
-    print('========', request.json())
     msg = await request.json()
+
     type_msg = msg['type']
     if type_msg == 'message':
         skypeid = msg['from']['id']
         text = msg['text']
-        asyncio.ensure_future(send_message(text+', да...', skypeid))
-    return aiohttp.web.HTTPCreated()  # 201
+        print(msg['conversation'])
 
-def index(request):
-    return aiohttp.web.Response(text="Welcome home!")
-	
+
 loop = asyncio.get_event_loop()
 app = aiohttp.web.Application(loop=loop)
 app.router.add_route('GET', '/', index)
 app.router.add_route('POST', '/v1/chat', handle)
-#aiohttp.web.run_app(app,
-#                        host='localhost',
-#                        ssl_context=None,
-#                        port=int(sys.argv[1]) if len(sys.argv) > 1 else None)
