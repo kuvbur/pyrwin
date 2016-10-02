@@ -4,6 +4,7 @@ import json
 import os
 import aiohttp.web  # $ pip install aiohttp
 import werkzeug.contrib.cache  # $ pip install werkzeug
+import main
 
 __version__ = '0.1'
 
@@ -34,7 +35,6 @@ async def get_access_token():
 
 
 async def send_text(msg, skypeid):
-
     url = 'https://apis.skype.com/v3/conversations/%s/activities/' % (skypeid)
     token = await get_access_token()
     headers = {}
@@ -44,7 +44,6 @@ async def send_text(msg, skypeid):
         assert 200 <= r.status < 300
 
 def index(request):
-
     ind =[ "Now the world has gone to bed",\
         "Darkness won't engulf my head",\
         "I can see by infra-red",\
@@ -58,13 +57,16 @@ def index(request):
 
 async def handle(request):
     msg = await request.json()
-
-    type_msg = msg['type']
-    if type_msg == 'message':
-        skypeid = msg['from']['id']
-        text = msg['text']
-        print(msg['conversation'])
-        asyncio.ensure_future(send_text('msg', skypeid))
+    type_m = msg['type']
+    author = msg['from']['id']
+    try:
+        isgroup = msg['conversation']['isGroup']
+        skypeid = msg['conversation']['id']
+    except KeyError:
+        isgroup = False
+        skypeid = author
+    text = msg['text']
+    main.choice(type_m, author, skypeid, isgroup, text)
     return aiohttp.web.HTTPCreated()
 
 
