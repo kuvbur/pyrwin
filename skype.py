@@ -66,11 +66,11 @@ async def handle(request):
     return aiohttp.web.HTTPCreated()  # 201
 
 def index(request):
-    return web.Response(text="Welcome home!")
+    return aiohttp.web.Response(text="Welcome home!")
 	
 loop = asyncio.get_event_loop()
 app = aiohttp.web.Application(loop=loop)
-app.router.add_route('/', index)
+app.router.add_route('GET', '/', index)
 app.router.add_route('POST', handle)
 #aiohttp.web.run_app(app,
 #                        host='localhost',
