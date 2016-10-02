@@ -1,1 +1,1 @@
-web: gunicorn skype:app --bind 0.0.0.0:8080 --worker-class aiohttp.worker.GunicornWebWorker
+web: gunicorn skype:app -b 0.0.0.0:$PORT --worker-class aiohttp.worker.GunicornWebWorker
