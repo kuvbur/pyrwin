@@ -71,7 +71,7 @@ def index(request):
 loop = asyncio.get_event_loop()
 app = aiohttp.web.Application(loop=loop)
 app.router.add_route('GET', '/', index)
-app.router.add_route('POST', handle)
+app.router.add_route('POST', '/v1/chat', handle)
 #aiohttp.web.run_app(app,
 #                        host='localhost',
 #                        ssl_context=None,
