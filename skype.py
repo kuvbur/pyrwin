@@ -43,12 +43,6 @@ async def send_text(msg, skypeid):
     async with aiohttp.post(url, data=data, headers=headers) as r:
         assert 200 <= r.status < 300
 
-
-async def send_messege(msg, skypeid):
-
-    asyncio.ensure_future(send_text(msg, skypeid))
-    return aiohttp.web.HTTPCreated()
-
 def index(request):
 
     ind =[ "Now the world has gone to bed",\
@@ -70,6 +64,8 @@ async def handle(request):
         skypeid = msg['from']['id']
         text = msg['text']
         print(msg['conversation'])
+        asyncio.ensure_future(send_text('msg', skypeid))
+    return aiohttp.web.HTTPCreated()
 
 
 loop = asyncio.get_event_loop()
