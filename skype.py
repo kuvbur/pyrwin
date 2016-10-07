@@ -55,6 +55,10 @@ def index(request):
     return aiohttp.web.Response(text = "\n".join(ind))
 
 
+def req(request):
+    print(request)
+
+
 async def handle(request):
     msg = await request.json()
     type_m = msg['type']
