@@ -55,9 +55,12 @@ def index(request):
     return aiohttp.web.Response(text = "\n".join(ind))
 
 
-def req(request):
+async def req(request):
+    msg = await request.json()
     dic = {'1':'q', '2':'q1', '3':'q1', '4':'q2'}
     data = json.dumps(dic)
+    if msg['key'] != '1212':
+        data = json.dumps({'':''})
     return aiohttp.web.json_response(data)
 
 async def handle(request):
@@ -79,4 +82,4 @@ loop = asyncio.get_event_loop()
 app = aiohttp.web.Application(loop=loop)
 app.router.add_route('GET', '/', index)
 app.router.add_route('POST', '/v1/chat', handle)
-app.router.add_route('GET', '/state', req)
+app.router.add_route('POST', '/state', req)
