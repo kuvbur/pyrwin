@@ -63,6 +63,18 @@ async def req(request):
         data = json.dumps({'':''})
     return aiohttp.web.json_response(data)
 
+async def wshandler(request):
+    ws = aiohttp.web.WebSocketResponse()
+    await ws.prepare(request)
+    async for msg in ws:
+        if msg.type == aiohttp.web.MsgType.text:
+            ws.send_str("Hello, {}".format(msg.data))
+        elif msg.type == aiohttp.web.MsgType.binary:
+            ws.send_bytes(msg.data)
+        elif msg.type == aiohttp.web.MsgType.close:
+            break
+    return ws
+
 async def handle(request):
     msg = await request.json()
     type_m = msg['type']
@@ -83,3 +95,5 @@ app = aiohttp.web.Application(loop=loop)
 app.router.add_route('GET', '/', index)
 app.router.add_route('POST', '/v1/chat', handle)
 app.router.add_route('POST', '/state', req)
+app.router.add_route('POST', '/state', req)
+app.router.add_get('/echo', wshandler)
