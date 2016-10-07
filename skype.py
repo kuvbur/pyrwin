@@ -57,7 +57,7 @@ def index(request):
 
 def req(request):
     print(request)
-
+    return aiohttp.web.Response()
 
 async def handle(request):
     msg = await request.json()
