@@ -65,14 +65,19 @@ async def req(request):
 
 async def wshandler(request):
     ws = aiohttp.web.WebSocketResponse()
-    await ws.prepare(request)
-    async for msg in ws:
-        if msg.type == aiohttp.web.MsgType.text:
+    ws.start(request)
+
+    while True:
+        msg = await ws.receive()
+        print(msg)
+
+        if msg.tp == aiohttp.web.MsgType.text:
             ws.send_str("Hello, {}".format(msg.data))
-        elif msg.type == aiohttp.web.MsgType.binary:
+        elif msg.tp == aiohttp.web.MsgType.binary:
             ws.send_bytes(msg.data)
-        elif msg.type == aiohttp.web.MsgType.close:
+        elif msg.tp == aiohttp.web.MsgType.close:
             break
+
     return ws
 
 async def handle(request):
