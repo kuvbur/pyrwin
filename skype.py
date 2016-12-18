@@ -15,7 +15,6 @@ APP_SECRET = os.environ['APP_SECRET']
 cache = werkzeug.contrib.cache.FileSystemCache('.cachedir', threshold=86400)
 common_http_headers = {'User-Agent': 'morse-code-bot/%s' % (__version__)}
 
-
 async def get_access_token():
 
     token = cache.get(key='token')
@@ -32,7 +31,6 @@ async def get_access_token():
             token = await r.json()
         cache.set('token', token, timeout=token['expires_in'])
     return token['access_token']
-
 
 async def send_text(msg, skypeid):
     url = 'https://apis.skype.com/v3/conversations/%s/activities/' % (skypeid)
@@ -53,7 +51,6 @@ def index(request):
         "Sweet dream wishes you can keep",\
         "How I hate the night"]
     return aiohttp.web.Response(text = "\n".join(ind))
-
 
 async def req(request):
     msg = await request.json()

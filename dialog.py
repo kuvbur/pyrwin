@@ -23,3 +23,5 @@ answer = ["Жизнь! Не говорите мне о жизни...",
 
 def get_speech():
     return random.choice(answer)
+
+    
